@@ -1,0 +1,29 @@
+OpenCode version: 1.18.30
+Session: ses_ee7efd5ebffed9IPoEZiOBaTeX
+Provider/model: ollama/itmo-agent-local
+VseLLM: not used
+Mode: read-only; no retained file edits or commits
+
+Observed tool call:
+  skill {"name":"review-api-contract","parameters":"{}"}
+  status: completed
+
+Observed command from the repeated local run:
+  make check
+
+Observed result:
+  All checks passed!
+  Practice 1 artifacts: OK
+  Practice 2 artifacts: OK
+  Ran 6 tests ... OK
+  Ran 3 tests ... OK
+
+The model then incorrectly described the expected MCP error for a
+20,001-character input as a git diff --check failure, although it had not run
+that command. Its repeating response was stopped. Independent verification:
+  git diff --check
+  exit code: 0
+
+OpenCode startup added a $schema line to the supplied tracked local config.
+That unrelated side effect was detected and reverted; practice_03/lab and demo
+have no resulting changes.
