@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Домашнее задание — практика 4</title>
+  <style>
+    body {
+      max-width: 980px;
+      margin: 40px auto;
+      padding: 0 24px;
+      color: #202124;
+      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    h1, h2 { line-height: 1.2; }
+    h2 { margin-top: 40px; border-bottom: 2px solid #8b5cf6; padding-bottom: 8px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    pre { overflow-x: auto; padding: 16px; border-radius: 8px; background: #f5f3ff; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border: 1px solid #d8d8dc; text-align: left; vertical-align: top; }
+    th { background: #f5f3ff; }
+    .ok { color: #176b35; font-weight: 700; }
+    .unknown { color: #8a4b08; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Домашнее задание: настроенная среда, skill и MCP</h1>
+  <p>
+    Проект продолжает фичи A и B для <code>POST /api/reviews</code> в отдельном
+    worktree <code>practice-04-b</code>. Ниже приведены действия и фактические
+    результаты; количество подключений само по себе не считается результатом.
+  </p>
+
+  <h2>А. Настроенная среда — 5 баллов</h2>
+  <table>
+    <thead><tr><th>Элемент</th><th>Применение и подтверждение</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Правила</td>
+        <td>
+          <a href="../../AGENTS.md">AGENTS.md</a> задаёт маршрут к требованиям,
+          границы A/B, критерии приёмки и команды. Актуальная короткая память
+          находится в <a href="HANDOFF.md">HANDOFF.md</a>.
+        </td>
+      </tr>
+      <tr>
+        <td>Skill</td>
+        <td>
+          Проектный <a href="../../.opencode/skills/review-api-contract/SKILL.md">review-api-contract</a>
+          читает актуальные артефакты, проверяет шесть сценариев и запускает
+          <code>make check</code>. OpenCode 1.18.30 обнаружил skill командой
+          <code>opencode debug skill</code>; валидатор вернул
+          <code>Skill is valid!</code>. Краткий журнал сохранён в
+          <a href="opencode-skill-run.txt">opencode-skill-run.txt</a>.
+        </td>
+      </tr>
+      <tr>
+        <td>MCP</td>
+        <td>
+          <a href="mcp_review_server.py">mcp_review_server.py</a> предоставляет
+          tool <code>check_review_diff</code>. Реальные вызовы официальным MCP
+          Client находятся в <a href="test_mcp_review_server.py">test_mcp_review_server.py</a>.
+        </td>
+      </tr>
+      <tr>
+        <td>Автопроверка</td>
+        <td>
+          <a href="../../.github/workflows/python-checks.yml">GitHub Actions</a>
+          запускает <code>make check</code> на каждом push. Локально эта команда
+          проверяет Ruff, практики 1–2, шесть API-сценариев и три MCP-сценария.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Б. Skill: создание и проверка — 2 балла</h2>
+  <p>
+    Skill имеет обязательный <code>SKILL.md</code> с точным условием применения,
+    последовательностью чтения файлов, проверками границ и запретом расширять
+    контракт посторонними фичами. Отдельный скрипт не добавлялся: содержательная
+    автоматизация уже собрана в корневом <code>make check</code>, а skill задаёт
+    воспроизводимый способ её применения и формат доказательств.
+  </p>
+  <pre>quick_validate.py .opencode/skills/review-api-contract
+→ Skill is valid!
+
+opencode debug skill
+→ review-api-contract найден по проектному пути
+
+opencode run -m ollama/itmo-agent-local ...
+→ skill(review-api-contract), затем make check
+
+make check
+→ All checks passed; Practice 1 OK; Practice 2 OK; API 6/6; MCP 3/3</pre>
+  <p>
+    Skill вызван через OpenCode с локальной моделью
+    <code>ollama/itmo-agent-local</code>; VseLLM не использовался. Модель сама
+    выполнила <code>make check</code>, но затем ошибочно назвала ожидаемую ошибку
+    MCP-теста для 20 001 символа сбоем <code>git diff --check</code>, хотя эту
+    команду не запускала. Повторяющийся ответ был остановлен, а
+    <code>git diff --check</code> выполнен отдельно с exit code 0.
+  </p>
+
+  <h2>В. Собственный MCP — 2 балла</h2>
+  <p>
+    Tool <code>check_review_diff(diff)</code> проверяет вход до обращения к API.
+    Он принимает непустую строку длиной не более 20 000 символов и возвращает
+    длину, ожидаемый HTTP-статус и разрешение на вызов LLM. Ошибки передаются
+    клиенту как MCP tool result с <code>isError=true</code>. Реализация использует
+    <a href="https://py.sdk.modelcontextprotocol.io/">официальный Python SDK MCP</a>
+    версии 2.3.0.
+  </p>
+  <pre>tools/list
+→ ["check_review_diff"]
+
+tools/call {"diff": "test"}
+→ {"accepted": true, "length": 4, "http_status": 200,
+   "llm_call_allowed": true}
+
+tools/call {"diff": "x" × 20001}
+→ isError=true, "diff has 20001 characters; maximum is 20000"
+
+tools/call {"diff": 123}
+→ isError=true (ввод отклонён схемой tool)</pre>
+  <p class="ok">Результат: 3 из 3 MCP-сценариев прошли.</p>
+
+  <h2>Г. Свободная рефлексия — 1 балл</h2>
+  <p>
+    Конкретные наблюдения о правилах, устаревшей документации, исправлении
+    HTTP 413, найденном субагентом HTTP 500 и границах проверки собраны в
+    <a href="reflection.md">reflection.md</a>.
+  </p>
+
+  <h2>Итоговая проверка</h2>
+  <table>
+    <thead><tr><th>Проверка</th><th>Результат</th></tr></thead>
+    <tbody>
+      <tr><td>Ruff</td><td class="ok">Пройден</td></tr>
+      <tr><td>Практики 1–2</td><td class="ok">Пройдены</td></tr>
+      <tr><td>API A/B</td><td class="ok">6 из 6</td></tr>
+      <tr><td>Собственный MCP</td><td class="ok">3 из 3</td></tr>
+      <tr><td><code>git diff --check</code></td><td class="ok">Exit code 0</td></tr>
+      <tr>
+        <td>Живой ASGI и GitHub Actions текущей ветки</td>
+        <td class="unknown">Ещё не подтверждены: изменения не отправлены</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
