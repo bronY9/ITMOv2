@@ -29,7 +29,8 @@ jobs:
       - name: Install Ruff
         run: |
           python -m pip install ruff==0.16.10
-          python -m pip install -r practices/practice_04/requirements.txt
+          python -m pip install -r practices/practice_05/requirements.txt
+          python -m playwright install --with-deps chromium
 
       - name: Run lint and tests
         run: |

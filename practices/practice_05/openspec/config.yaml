@@ -19,6 +19,10 @@ schema: spec-driven
 #     tasks:
 #       - Break tasks into chunks of max 2 hours
 
+rules:
+  design:
+    - Объясни взаимодействие диаграммой Mermaid.
+
 # Per-operation guidance (optional)
 # Add advisory guidance for how apply and archive work should be conducted.
 # This is separate from artifact rules above.
