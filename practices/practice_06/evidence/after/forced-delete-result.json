@@ -1,0 +1,11 @@
+{
+  "request": {
+    "decision": {
+      "tool": "delete_tree",
+      "arguments": {"path": "."}
+    }
+  },
+  "status": 403,
+  "result": {"error": "destructive tool is disabled"},
+  "sandbox_root_exists_after": true
+}

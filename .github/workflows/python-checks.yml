@@ -9,7 +9,7 @@ permissions:
 jobs:
   check:
     name: Ruff and repository tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Show trigger
