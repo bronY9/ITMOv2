@@ -1,4 +1,4 @@
-.PHONY: check feature-test install lint mcp-test test step1 step2
+.PHONY: check feature-test install lint mcp-test test step1 step2 step5
 
 PYTHON ?= python3
 RUFF ?= ruff
@@ -15,7 +15,7 @@ install:
 lint:
 	@$(RUFF) check --select E4,E7,E9,F,I $(PYTHON_LINT_PATHS)
 
-test: step1 step2 feature-test mcp-test
+test: step1 step2 feature-test mcp-test step5
 
 check: lint test
 
@@ -30,3 +30,7 @@ step1:
 
 step2:
 	@$(MAKE) -s -C practices/practice_02 test
+
+step5:
+	@$(MAKE) -s -C practices/practice_05 check \
+		PYTHON=$(PYTHON) RUFF=$(RUFF)

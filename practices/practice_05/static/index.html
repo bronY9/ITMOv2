@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Проверка diff</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Review assistant</p>
+        <h1 id="page-title">Проверьте diff перед ревью</h1>
+        <p class="lead">
+          Вставьте изменения, проверьте формат и только затем запускайте ревью.
+          Предварительная проверка не обращается к LLM.
+        </p>
+      </section>
+
+      <section class="review-card" aria-label="Форма проверки diff">
+        <div class="field-heading">
+          <label for="diff-input">Diff</label>
+          <output id="character-count" for="diff-input">0 / 20 000</output>
+        </div>
+        <textarea
+          id="diff-input"
+          name="diff"
+          rows="13"
+          spellcheck="false"
+          aria-describedby="diff-help status-message error-message"
+          placeholder="diff --git a/app.py b/app.py"
+        ></textarea>
+        <p id="diff-help" class="field-help">
+          Максимум 20 000 символов; пробельный текст не принимается.
+        </p>
+
+        <div class="actions">
+          <button id="validate-button" class="button button-secondary" type="button">
+            Проверить diff
+          </button>
+          <button id="review-button" class="button button-primary" type="button">
+            Запустить ревью
+          </button>
+        </div>
+
+        <div class="feedback" aria-busy="false">
+          <p id="status-message" class="status" aria-live="polite">
+            Готово к проверке
+          </p>
+          <p id="error-message" class="error" role="alert" hidden></p>
+        </div>
+
+        <section id="result-panel" class="result-panel" aria-labelledby="result-title" hidden>
+          <p class="result-kicker">Результат</p>
+          <h2 id="result-title">Комментарий ревью</h2>
+          <pre id="review-result" tabindex="0"></pre>
+        </section>
+      </section>
+    </main>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
