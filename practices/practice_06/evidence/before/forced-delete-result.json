@@ -1,0 +1,11 @@
+{
+  "request": {
+    "decision": {
+      "tool": "delete_tree",
+      "arguments": {"path": "."}
+    }
+  },
+  "status": 200,
+  "result": {"deleted": "."},
+  "sandbox_root_exists_after": false
+}
