@@ -1,0 +1,41 @@
+name: Practice 8 frontend
+
+on:
+  push:
+    branches: [practice_08]
+  pull_request:
+    paths:
+      - 'practices/practice_08/**'
+      - 'practices/practice_05/review_app.py'
+      - '.github/workflows/practice-08.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: practices/practice_08/homework/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: practices/practice_08/homework/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm test -- --reporter=verbose
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: practice-08-browser-evidence
+          path: |
+            practices/practice_08/homework/evidence/*.png
+            practices/practice_08/homework/frontend/playwright-report/
+          retention-days: 30

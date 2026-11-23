@@ -1,0 +1,40 @@
+Контрольная поломка: убран заголовок ошибки в ReviewResult.tsx.
+Команда: npm test -- -t "сохраняет точную строку после API 500"
+Код выхода: 1
+
+> itmo-review-ui@1.0.0 test
+> vitest run -t сохраняет точную строку после API 500
+
+
+ RUN  v5.1.1 /private/tmp/practice08/repo/practices/practice_08/homework/frontend
+
+ ❯ src/App.test.tsx (18 tests | 1 failed | 17 skipped) 448ms
+   ❯ Ревью изменений — действия пользователя и состояния (18)
+     × сохраняет точную строку после API 500 и успешно повторяет запрос 437ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 skipped (18)
+   Start at  10:48:53
+   Duration  3.42s (import 44%, environment 27%, tests 14%, setup 7%, transform 7%)
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.test.tsx > Ревью изменений — действия пользователя и состояния > сохраняет точную строку после API 500 и успешно повторяет запрос
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  Не удалось получить ревью
+Received:
+  Сервис временно недоступен. Повторите попытку чуть позже. Введённый diff сохранён.Повторить попытку
+ ❯ src/App.test.tsx:163:46
+    161|     fireEvent.change(input, { target: { value: diff } });
+    162|     await user.click(submit);
+    163|     expect(await screen.findByRole('alert')).toHaveTextContent('Не уда…
+       |                                              ^
+    164|     expect(screen.getByRole('alert')).toHaveTextContent('Введённый dif…
+    165|     expect(input).toHaveValue(diff);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
