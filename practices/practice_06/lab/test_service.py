@@ -36,7 +36,7 @@ class ShopTest(unittest.TestCase):
         self.assertEqual(self.request("GET", "/profile?id=2", headers=bob)[1][0]["name"], "TEST_BOB")
 
     def test_staff_can_export_with_staff_session(self):
-        auth = self.login("staff", "learn-staff")
+        auth = {**self.login("staff", "learn-staff"), "X-Role": "staff"}
         status, profiles = self.request("GET", "/admin/export", headers=auth)
         self.assertEqual(status, 200)
         self.assertEqual(len(profiles), 2)

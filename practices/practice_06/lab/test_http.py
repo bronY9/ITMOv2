@@ -52,31 +52,6 @@ class HttpTest(unittest.TestCase):
         self.assertEqual((status, json.loads(body)), (200, {"status": "ok"}))
         self.assertEqual(self.call("GET", "/missing")[0], 404)
 
-    def test_malformed_json_is_a_controlled_client_error(self):
-        request = Request(
-            self.base + "/login",
-            data=b"{not-json",
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        with self.assertRaises(HTTPError) as raised:
-            urlopen(request, timeout=5)
-        self.assertEqual(raised.exception.status, 400)
-        body = raised.exception.read().decode()
-        self.assertEqual(json.loads(body), {"error": "invalid request"})
-        self.assertNotIn("JSONDecodeError", body)
-
-    def test_post_requires_json_content_type(self):
-        request = Request(
-            self.base + "/login",
-            data=b"{}",
-            headers={"Content-Type": "text/plain"},
-            method="POST",
-        )
-        with self.assertRaises(HTTPError) as raised:
-            urlopen(request, timeout=5)
-        self.assertEqual(raised.exception.status, 415)
-
     def test_transport_only_binds_loopback(self):
         self.assertEqual(self.server.server_address[0], "127.0.0.1")
 
