@@ -37,4 +37,3 @@ Received:
     165|     expect(input).toHaveValue(diff);
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
-

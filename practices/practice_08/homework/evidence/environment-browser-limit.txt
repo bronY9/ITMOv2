@@ -9,7 +9,7 @@ Error: browserType.launch: Target page, context or browser has been closed
     [pid=9322][err] [1123/104538.912393:ERROR:base/power_monitor/thermal_state_observer_mac.mm:122] ThermalStateObserverMac unable to register to power notifications. Result: 9
     [pid=9322][err] [1123/104538.919965:ERROR:net/dns/dns_config_service_posix.cc:139] DNS config watch failed to start.
     [pid=9322][err] [1123/104538.924142:FATAL:base/apple/mach_port_rendezvous_mac.cc:159] Check failed: kr == KERN_SUCCESS. bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer.9322: Permission denied (1100)
-    
+
 
 WebKit:
 Error: browserType.launch: Target page, context or browser has been closed
@@ -18,4 +18,3 @@ Error: browserType.launch: Target page, context or browser has been closed
     <launching> /tmp/practice08/browsers/webkit-2388/pw_run.sh --inspector-pipe --headless --no-startup-window
     <launched> pid=10383
     [pid=10383][err] /tmp/practice08/browsers/webkit-2388/pw_run.sh: line 7: 10399 Abort trap: 6           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
-    
