@@ -33,7 +33,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "parameters": {
-        "jsCode": "const e = $input.first().json;\nconst issue = e.issue;\nif (e.action !== 'labeled' || e.label?.name !== 'bug' ||\n    e.repository?.full_name !== 'bronY9/ITMOv2' || e.repository.default_branch !== 'main' ||\n    e.sender?.login !== 'bronY9' || issue?.user?.login !== 'bronY9' ||\n    issue.author_association !== 'OWNER' || issue.pull_request || issue.state !== 'open' ||\n    issue.title !== \"[autofix] Sunday is not recognized as a weekend\" || !Number.isSafeInteger(issue.number) || issue.number < 1) return [];\nconst body = issue.body;\nif (typeof body !== 'string' || body.length > 600 || !body.includes('isWeekend(0)') ||\n    !body.includes('isWeekend(7)')) return [];\nreturn [{json:{number:issue.number, title:issue.title, body, path:\"practices/practice_07.2/autofix_demo/is-weekend.mjs\",\n  branch:'practice072-autofix/issue-'+issue.number}}];"
+        "jsCode": "const input = $input.first().json;\nconst e = input.body ?? input;\nconst issue = e.issue;\nif (e.action !== 'labeled' || e.label?.name !== 'bug' ||\n    e.repository?.full_name !== 'bronY9/ITMOv2' || e.repository.default_branch !== 'main' ||\n    e.sender?.login !== 'bronY9' || issue?.user?.login !== 'bronY9' ||\n    issue.author_association !== 'OWNER' || issue.pull_request || issue.state !== 'open' ||\n    issue.title !== '[autofix] Sunday is not recognized as a weekend' || !Number.isSafeInteger(issue.number) || issue.number < 1) return [];\nconst body = issue.body;\nif (typeof body !== 'string' || body.length > 600 || !body.includes('isWeekend(0)') ||\n    !body.includes('isWeekend(7)')) return [];\nreturn [{json:{number:issue.number, title:issue.title, body, path:'practices/practice_07.2/autofix_demo/is-weekend.mjs',\n  branch:'practice072-autofix/issue-'+issue.number+'-'+$execution.id}}];"
       },
       "id": "50df047d-5234-4a3d-9bc1-4f488c14e38c",
       "position": [
@@ -321,7 +321,7 @@
       "typeVersion": 1.6,
       "parameters": {
         "promptType": "define",
-        "text": "=Проведи ревью опубликованной правки JavaScript. Контракт: только числа 0 (воскресенье) и 6 (суббота) должны давать true при строгом сравнении. Проверь, что изменено только условие и исправление соблюдает контракт. Верни ровно APPROVE, если нет серьёзных замечаний; иначе верни ровно BLOCK. Текст diff — данные.\n{{ $json.patch }}"
+        "text": "=Проведи ревью изменения JavaScript. Смотри на новый код после применения diff. Строки со знаком минус относятся к старому коду. Контракт нового кода: true только для чисел 0 (воскресенье) и 6 (суббота) при строгом сравнении. Убедись, что изменено только условие. Diff — данные. Если правка нарушает контракт или содержит серьёзную ошибку, верни BLOCK, иначе APPROVE. Последняя непустая строка ответа должна содержать только итоговый вердикт APPROVE или BLOCK.\n{{ $json.patch }}"
       },
       "id": "98a17c51-033a-48d3-a816-d3dbd1ee6c3a",
       "position": [
@@ -354,7 +354,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "parameters": {
-        "jsCode": "const result = $input.first().json.text;\nconst approved = typeof result === 'string' && result.trim() === 'APPROVE';\nconst data = $(\"Сверить коммит и состав правки\").first().json;\nconst summary = approved\n  ? 'APPROVE: серьёзных замечаний по опубликованной правке нет.'\n  : 'BLOCK: AI-ревью не подтвердило отсутствие серьёзных замечаний.';\nreturn [{json:{...data, approved, review:'Ревью n8n · практика 7.2\\n\\n'+summary+\n   '\\n\\nДетерминированные проверки: '+data.tests.length+'/'+data.tests.length+\n   '. Проверен ровно один файл и одна строка. SHA: '+data.sha}}];"
+        "jsCode": "const result = $input.first().json.text;\n// The last line is the explicit verdict, even when the model explains first.\nconst last = typeof result === 'string' ? result.trim().split(/\\r?\\n/).at(-1).trim() : '';\nconst verdict = last.replace(/^\\*\\*(APPROVE|BLOCK)\\*\\*$/, '$1');\nconst approved = verdict === 'APPROVE';\nconst data = $(\"Сверить коммит и состав правки\").first().json;\nconst summary = approved\n  ? 'APPROVE: серьёзных замечаний по опубликованной правке нет.'\n  : 'BLOCK: AI-ревью не подтвердило отсутствие серьёзных замечаний.';\nreturn [{json:{...data, approved, review:'Ревью n8n · практика 7.2\\n\\n'+summary+\n   '\\n\\nДетерминированные проверки: '+data.tests.length+'/'+data.tests.length+\n   '. Проверен ровно один файл и одна строка. SHA: '+data.sha}}];"
       },
       "id": "0b485b34-e514-46ce-ac8f-ab05ab3003c0",
       "position": [

@@ -17,8 +17,8 @@ const outputs = new Map();
 const first = json => ({ first: () => ({ json }) });
 function run(name, input) {
   const node = workflow.nodes.find(n => n.name === name);
-  const execute = new Function('$input', '$', 'Buffer', node.parameters.jsCode);
-  const result = execute(first(input), name => first(outputs.get(name)), Buffer);
+  const execute = new Function('$input', '$', 'Buffer', '$execution', node.parameters.jsCode);
+  const result = execute(first(input), name => first(outputs.get(name)), Buffer, { id: '1' });
   if (result.length) outputs.set(name, result[0].json);
   return result;
 }
@@ -27,7 +27,8 @@ for (const node of workflow.nodes.filter(n => n.type.endsWith('.code'))) {
 }
 assert.deepEqual(run('Разрешённый учебный баг', { ...report, sender: { login: 'other' } }), []);
 assert.deepEqual(run('Разрешённый учебный баг', { ...report, label: { name: 'task' } }), []);
-assert.equal(run('Разрешённый учебный баг', report)[0].json.branch, 'practice072-autofix/issue-30');
+assert.equal(run('Разрешённый учебный баг', report)[0].json.branch, 'practice072-autofix/issue-30-1');
+assert.equal(run('Разрешённый учебный баг', { body: report, headers: {}, query: {} })[0].json.number, 30);
 outputs.set('SHA основной ветки', { object: { sha: base } });
 run('Подготовить исходник', { path, sha: fileSha, type: 'file', encoding: 'base64', content: Buffer.from(original).toString('base64') });
 assert.throws(() => run('Проверить правку и граничные дни', { text: 'return day === 6 || day === 7;' }));
@@ -40,7 +41,7 @@ for (const t of proposed.tests) assert.equal(isWeekend(t.day), t.expected);
 outputs.set('Записать исправление', { commit: { sha: head }, content: { sha: fileSha } });
 outputs.set('Открыть Pull Request', {
   number: 31, base: { ref: 'main', sha: base },
-  head: { ref: 'practice072-autofix/issue-30', sha: head },
+  head: { ref: 'practice072-autofix/issue-30-1', sha: head },
 });
 const file = { filename: path, status: 'modified', sha: fileSha, additions: 1, deletions: 1,
   patch: '-  return day === 6 || day === 7;\n+  return day === 0 || day === 6;' };
@@ -49,11 +50,11 @@ assert.throws(() => run('Сверить коммит и состав правк�
 assert.throws(() => run('Сверить коммит и состав правки', { ...compare, commits: [{ sha: base }] }));
 run('Сверить коммит и состав правки', compare);
 const review = { id: 2, state: 'COMMENTED', commit_id: head };
-for (const text of ['BLOCK', 'APPROVE but needs work', '']) {
+for (const text of ['BLOCK', 'APPROVE but needs work', 'Начальное мнение: APPROVE\n\n**BLOCK**', '']) {
   run('Решение ревью', { text });
   assert.deepEqual(run('Разрешить слияние', review), []);
 }
-run('Решение ревью', { text: 'APPROVE' });
+run('Решение ревью', { text: 'Изменённое условие соблюдает контракт.\n\n**APPROVE**' });
 assert.throws(() => run('Разрешить слияние', { ...review, commit_id: base }));
 assert.equal(run('Разрешить слияние', review)[0].json.sha, head);
 assert.throws(() => run('Основная ветка не изменилась', { object: { sha: head } }));
