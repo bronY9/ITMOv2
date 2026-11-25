@@ -1,0 +1,263 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #162033;
+  background: #eef2ff;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 0;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 10% 10%, rgb(165 180 252 / 55%), transparent 34rem),
+    radial-gradient(circle at 90% 90%, rgb(110 231 183 / 45%), transparent 30rem),
+    #f8fafc;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(32rem, 1.2fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+  width: min(72rem, calc(100% - 2rem));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+.eyebrow,
+.result-kicker {
+  margin: 0 0 0.75rem;
+  color: #4f46e5;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+}
+
+.lead {
+  max-width: 36rem;
+  margin: 1.5rem 0 0;
+  color: #475569;
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.review-card {
+  min-width: 0;
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 1.75rem;
+  background: rgb(255 255 255 / 86%);
+  box-shadow: 0 1.5rem 5rem rgb(30 41 59 / 16%);
+  backdrop-filter: blur(1rem);
+}
+
+.field-heading {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+label {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+output {
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+output.is-over-limit {
+  color: #b91c1c;
+  font-weight: 800;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  min-height: 17rem;
+  resize: vertical;
+  padding: 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 1rem;
+  outline: none;
+  color: #0f172a;
+  background: #f8fafc;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  line-height: 1.55;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+textarea:focus-visible {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgb(79 70 229 / 18%);
+}
+
+.field-help {
+  margin: 0.65rem 0 0;
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.button {
+  min-height: 2.9rem;
+  padding: 0.75rem 1.1rem;
+  border: 2px solid transparent;
+  border-radius: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.button:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.button-primary {
+  color: #fff;
+  background: #4338ca;
+  box-shadow: 0 0.65rem 1.25rem rgb(67 56 202 / 24%);
+}
+
+.button-secondary {
+  border-color: #c7d2fe;
+  color: #3730a3;
+  background: #eef2ff;
+}
+
+.feedback {
+  min-height: 4.25rem;
+  margin-top: 1.25rem;
+}
+
+.status,
+.error {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  line-height: 1.45;
+}
+
+.status {
+  color: #334155;
+  background: #f1f5f9;
+}
+
+.status.is-success {
+  color: #14532d;
+  background: #dcfce7;
+}
+
+.error {
+  margin-top: 0.6rem;
+  color: #7f1d1d;
+  background: #fee2e2;
+}
+
+.result-panel {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #a7f3d0;
+  border-radius: 1rem;
+  background: #ecfdf5;
+}
+
+.result-panel h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+#review-result {
+  margin: 0.85rem 0 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 800px) {
+  .page-shell {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    padding: 2rem 0;
+  }
+
+  h1 {
+    max-width: 15ch;
+    font-size: clamp(2.5rem, 13vw, 4.2rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .page-shell {
+    width: min(100% - 1rem, 72rem);
+  }
+
+  .review-card {
+    padding: 1rem;
+    border-radius: 1.1rem;
+  }
+
+  .actions,
+  .button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
